@@ -12,7 +12,7 @@ const (
 	EOF     = "EOF"
 
 	// Indentifiers + literals
-	IDENT = "INDENT"
+	IDENT = "IDENT"
 	INT   = "INT"
 
 	// Operators
