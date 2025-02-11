@@ -8,7 +8,7 @@ import (
 
 func TestLetStatements(t *testing.T) {
 	input := `
-    let x =5;
+    let x = 5;
     let y = 10;
     let foobar = 838383;
   `
@@ -27,21 +27,22 @@ func TestLetStatements(t *testing.T) {
 
 	tests := []struct {
 		expectedIdentifier string
+		expectedValue      string
 	}{
-		{"x"},
-		{"y"},
-		{"foobar"},
+		{"x", "5"},
+		{"y", "10"},
+		{"foobar", "838383"},
 	}
 
 	for i, tt := range tests {
 		stmt := program.Statements[i]
-		if !testLetStatement(t, stmt, tt.expectedIdentifier) {
+		if !testLetStatement(t, stmt, tt.expectedIdentifier, tt.expectedValue) {
 			return
 		}
 	}
 }
 
-func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
+func testLetStatement(t *testing.T, s ast.Statement, name string, value string) bool {
 	if s.TokenLiteral() != "let" {
 		t.Errorf("s.TokenLiteral not 'let'. got=%q", s.TokenLiteral())
 		return false
@@ -56,6 +57,10 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 	if letStmt.Name.Value != name {
 		t.Errorf("letStmt.Name.Value not '%s'. got=%s", name, letStmt.Name)
 		return false
+	}
+
+	if letStmt.Name.TokenLiteral() != name {
+		t.Errorf("s.Name not '%s'. got=%s", name, letStmt.Name)
 	}
 
 	return true
