@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"monkey/interpreter/eval"
 	"monkey/interpreter/lexer"
 	"monkey/interpreter/parser"
 )
@@ -12,7 +13,6 @@ const PROMPT = ">> "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
-	history := []string{}
 
 	for {
 		fmt.Printf(PROMPT)
@@ -26,15 +26,17 @@ func Start(in io.Reader, out io.Writer) {
 		l := lexer.New(line)
 		p := parser.New(l)
 
-		history = append(history, line)
-
 		program := p.ParseProgram()
 		if len(p.Errors()) != 0 {
 			printParserErrors(out, p.Errors())
 			continue
 		}
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+
+		evaluated := eval.Eval(program)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
