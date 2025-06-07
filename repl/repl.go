@@ -12,6 +12,7 @@ const PROMPT = ">> "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	history := []string{}
 
 	for {
 		fmt.Printf(PROMPT)
@@ -21,8 +22,11 @@ func Start(in io.Reader, out io.Writer) {
 		}
 
 		line := scanner.Text()
+
 		l := lexer.New(line)
 		p := parser.New(l)
+
+		history = append(history, line)
 
 		program := p.ParseProgram()
 		if len(p.Errors()) != 0 {
@@ -35,6 +39,7 @@ func Start(in io.Reader, out io.Writer) {
 }
 
 func printParserErrors(out io.Writer, errors []string) {
+	io.WriteString(out, " parser errors:\n")
 	for _, msg := range errors {
 		io.WriteString(out, "\t"+msg+"\n")
 	}
